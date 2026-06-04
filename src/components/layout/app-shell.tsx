@@ -73,11 +73,8 @@ export function AppShell() {
   if (user) {
     return (
       <div className="phone-shell flex flex-col">
-        <div className="shrink-0">
-          <div className="hidden sm:block">
-            <StatusBar />
-          </div>
-          <div className="block sm:hidden h-[env(safe-area-inset-top,0px)]" />
+        <div className="shrink-0 hidden sm:block">
+          <StatusBar />
         </div>
 
         <div className="flex-1 overflow-hidden relative">
@@ -106,10 +103,8 @@ export function AppShell() {
   if (showLogin) {
     return (
       <div className="phone-shell flex flex-col">
-        <div className="shrink-0">
-          <div className="hidden sm:block">
-            <StatusBar />
-          </div>
+        <div className="shrink-0 hidden sm:block">
+          <StatusBar />
         </div>
         <div className="flex-1 overflow-y-auto">
           <AuthPage onBack={() => setShowLogin(false)} />
