@@ -228,26 +228,22 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
     }
   }, [mode, ftlWaybills, ltlWaybills, cargoType, arrivalTime, periodEnabled, periodFreq, periodCustomDays, periodDuration, periodEnd, paymentMode, autoPayAgreed, setDeliveryForm]);
 
-  // 地址编辑页 → 主页数据同步
-  const pendingAddressForm = useOrderStore((s) => s.pendingAddressForm);
+  // 从 sessionStorage 恢复地址编辑数据（绕过 Zustand 订阅时序问题）
   useEffect(() => {
-    if (pendingAddressForm) {
-      if (pendingAddressForm.ltlWaybills) {
-        // LTL 模式：运单地址
-        setLtlWaybills(pendingAddressForm.ltlWaybills);
-      } else if (pendingAddressForm.currentWaybillId && pendingAddressForm.mode === 'full') {
-        // FTL 模式：特定运单的经停点
+    const raw = sessionStorage.getItem('agv-addr-pending')
+    if (!raw) return
+    sessionStorage.removeItem('agv-addr-pending')
+    try {
+      const data = JSON.parse(raw)
+      if (data.mode === 'lcl' && data.ltlWaybills?.length) {
+        setLtlWaybills(data.ltlWaybills)
+      } else if (data.mode === 'full' && data.stops?.length && data.currentWaybillId) {
         setFtlWaybills((prev) => prev.map((w) =>
-          w.id === pendingAddressForm.currentWaybillId
-            ? { ...w, stops: pendingAddressForm.stops }
-            : w
-        ));
-      } else {
-        setStops(pendingAddressForm.stops);
+          w.id === data.currentWaybillId ? { ...w, stops: data.stops } : w
+        ))
       }
-      useOrderStore.getState().setPendingAddressForm(null);
-    }
-  }, [pendingAddressForm]);
+    } catch { /* ignore parse errors */ }
+  }, [])
 
   // 从 store 恢复表单（从地址编辑页返回、费用确认页返回时不丢数据）
   const savedForm = useOrderStore((s) => s.deliveryForm);

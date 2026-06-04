@@ -68,15 +68,11 @@ export function AddressEditPage({ page }: { page: SubPage }) {
   };
 
   const handleSave = () => {
-    const df = useOrderStore.getState().deliveryForm
-    if (isWaybill) {
-      useOrderStore.getState().setDeliveryForm({ ...df, deliveryMode: 'ltl', ltlWaybills } as typeof df)
-    } else if (pageData.currentWaybillId && df.deliveryMode === 'full_load') {
-      const updatedWbs = df.ftlWaybills.map((w) =>
-        w.id === pageData.currentWaybillId ? { ...w, stops } : w
-      )
-      useOrderStore.getState().setDeliveryForm({ ...df, ftlWaybills: updatedWbs })
-    }
+    // 用 sessionStorage 桥接地址数据，绕过组件重挂载时 Zustand 订阅时序问题。
+    const payload = isWaybill
+      ? { mode: 'lcl' as const, ltlWaybills }
+      : { mode: 'full' as const, stops, currentWaybillId: pageData.currentWaybillId }
+    sessionStorage.setItem('agv-addr-pending', JSON.stringify(payload))
     popPage();
   };
 
