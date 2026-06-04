@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   keywords: ['无人车', '物流配送', '巡游贩卖', '安防巡检', '智慧物流'],
 };
 
+export const viewport = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -14,9 +16,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-      </head>
       <body className="antialiased">
         {children}
       </body>
