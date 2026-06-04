@@ -68,6 +68,8 @@ export function AddressEditPage({ page }: { page: SubPage }) {
   };
 
   const handleSave = () => {
+    window.__addr_save_called = (window.__addr_save_called || 0) + 1
+    window.__addr_save_data = { mode: pageData.mode, isWaybill, cwid: pageData.currentWaybillId, stop0: stops[0]?.address, dfMode: useOrderStore.getState().deliveryForm?.deliveryMode }
     console.log('[ADDR-SAVE] mode:', pageData.mode, 'isWaybill:', isWaybill, 'cwid:', pageData.currentWaybillId)
     console.log('[ADDR-SAVE] stops[0]:', stops[0]?.address, 'stops length:', stops.length)
 
