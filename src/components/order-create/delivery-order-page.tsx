@@ -249,24 +249,23 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
     }
   }, [pendingAddressForm]);
 
-  // 从 store 恢复表单（从费用确认页返回时不丢数据）
+  // 从 store 恢复表单（从地址编辑页返回、费用确认页返回时不丢数据）
   const savedForm = useOrderStore((s) => s.deliveryForm);
-  const restoredRef = useRef(false);
+  const mountIdRef = useRef(0);
   useEffect(() => {
-    if (restoredRef.current) return;
-    // stops 字段已废弃；通过判别联合类型窄化读取
+    // 仅组件首次挂载时从 store 恢复（含重挂载场景，如地址编辑页 pop 回归）
+    if (mountIdRef.current > 0) return;
+    mountIdRef.current = Date.now();
     if (savedForm.deliveryMode === 'full_load') {
       const hasFtl = savedForm.ftlWaybills.length > 0;
       const hasSelections = savedForm.vehicleSelections.length > 0;
       if (!hasFtl && !hasSelections) return;
-      restoredRef.current = true;
       if (hasFtl) setFtlWaybills(savedForm.ftlWaybills);
       if (hasSelections) setVehicleSelections(savedForm.vehicleSelections);
     } else {
       const hasLtl = savedForm.ltlWaybills.length > 0;
       if (!hasLtl) return;
-      restoredRef.current = true;
-      if (hasLtl) setLtlWaybills(savedForm.ltlWaybills);
+      setLtlWaybills(savedForm.ltlWaybills);
     }
     if (savedForm.cargoType) setCargoType(savedForm.cargoType as CargoType);
     if (savedForm.arrivalTime) setArrivalTime(savedForm.arrivalTime);
@@ -278,7 +277,7 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
     if (savedForm.paymentMode) setPaymentMode(savedForm.paymentMode as PaymentMode);
     if (savedForm.autoPayAgreed !== undefined) setAutoPayAgreed(savedForm.autoPayAgreed);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [savedForm]);
 
   // CSV 批量导入
   const [showCsvPreview, setShowCsvPreview] = useState(false);
