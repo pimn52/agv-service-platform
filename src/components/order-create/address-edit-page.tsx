@@ -68,11 +68,12 @@ export function AddressEditPage({ page }: { page: SubPage }) {
   };
 
   const handleSave = () => {
-    // 用 sessionStorage 桥接地址数据，绕过组件重挂载时 Zustand 订阅时序问题。
     const payload = isWaybill
       ? { mode: 'lcl' as const, ltlWaybills }
       : { mode: 'full' as const, stops, currentWaybillId: pageData.currentWaybillId }
+    console.log('[address-edit save] writing to sessionStorage:', JSON.stringify(payload).slice(0, 200))
     sessionStorage.setItem('agv-addr-pending', JSON.stringify(payload))
+    console.log('[address-edit save] sessionStorage set done. popping...')
     popPage();
   };
 

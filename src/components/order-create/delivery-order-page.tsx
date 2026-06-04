@@ -228,28 +228,33 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
     }
   }, [mode, ftlWaybills, ltlWaybills, cargoType, arrivalTime, periodEnabled, periodFreq, periodCustomDays, periodDuration, periodEnd, paymentMode, autoPayAgreed, setDeliveryForm]);
 
-  // 从 sessionStorage 恢复地址编辑数据（绕过 Zustand 订阅时序问题）
-  useEffect(() => {
-    const raw = sessionStorage.getItem('agv-addr-pending')
-    if (!raw) return
-    sessionStorage.removeItem('agv-addr-pending')
-    try {
-      const data = JSON.parse(raw)
-      if (data.mode === 'lcl' && data.ltlWaybills?.length) {
-        setLtlWaybills(data.ltlWaybills)
-      } else if (data.mode === 'full' && data.stops?.length && data.currentWaybillId) {
-        setFtlWaybills((prev) => prev.map((w) =>
-          w.id === data.currentWaybillId ? { ...w, stops: data.stops } : w
-        ))
-      }
-    } catch { /* ignore parse errors */ }
-  }, [])
-
-  // 从 store 恢复表单（从地址编辑页返回、费用确认页返回时不丢数据）
+  // 从 store 恢复表单（首次挂载 / 从地址编辑/费用确认返回时保留数据）
   const savedForm = useOrderStore((s) => s.deliveryForm);
   const mountIdRef = useRef(0);
   useEffect(() => {
-    // 仅组件首次挂载时从 store 恢复（含重挂载场景，如地址编辑页 pop 回归）
+    console.log('[delivery-page mount] effect running. mountIdRef:', mountIdRef.current)
+    // 首次挂载：先检查 sessionStorage 是否有地址编辑的待提交数据（优先级最高）
+    const raw = sessionStorage.getItem('agv-addr-pending')
+    console.log('[delivery-page mount] sessionStorage raw:', raw ? raw.slice(0, 100) : 'null')
+    if (raw) {
+      sessionStorage.removeItem('agv-addr-pending')
+      try {
+        const data = JSON.parse(raw)
+        if (data.mode === 'lcl' && data.ltlWaybills?.length) {
+          setLtlWaybills(data.ltlWaybills)
+          mountIdRef.current = Date.now()
+          return // sessionStorage 数据优先，跳过 store 恢复
+        } else if (data.mode === 'full' && data.stops?.length && data.currentWaybillId) {
+          setFtlWaybills((prev) => prev.map((w) =>
+            w.id === data.currentWaybillId ? { ...w, stops: data.stops } : w
+          ))
+          mountIdRef.current = Date.now()
+          return // sessionStorage 数据优先
+        }
+      } catch { /* ignore parse errors */ }
+    }
+
+    // 仅首次挂载时从 store 恢复表单
     if (mountIdRef.current > 0) return;
     mountIdRef.current = Date.now();
     if (savedForm.deliveryMode === 'full_load') {
