@@ -68,20 +68,26 @@ export function AddressEditPage({ page }: { page: SubPage }) {
   };
 
   const handleSave = () => {
-    // 直接写入 deliveryForm（而非 pendingAddressForm 中转），
-    // 避免组件重挂载时 savedForm 恢复覆盖掉地址更新。
-    console.log('[addr-save] isWaybill:', isWaybill, 'currentWaybillId:', pageData.currentWaybillId, 'stops:', JSON.stringify(stops.map(s => ({id:s.id,addr:s.address}))), 'df.mode:', useOrderStore.getState().deliveryForm?.deliveryMode)
+    console.log('[ADDR-SAVE] mode:', pageData.mode, 'isWaybill:', isWaybill, 'cwid:', pageData.currentWaybillId)
+    console.log('[ADDR-SAVE] stops[0]:', stops[0]?.address, 'stops length:', stops.length)
+
     const df = useOrderStore.getState().deliveryForm
+    console.log('[ADDR-SAVE] df.mode:', df.deliveryMode, 'df.ftlWbs len:', df.deliveryMode === 'full_load' ? df.ftlWaybills.length : 'n/a')
+
     if (isWaybill) {
       useOrderStore.getState().setDeliveryForm({ ...df, deliveryMode: 'ltl', ltlWaybills } as typeof df)
-    } else if (pageData.currentWaybillId) {
-      // FTL：更新指定运单的经停点
-      if (df.deliveryMode === 'full_load') {
-        const updatedWbs = df.ftlWaybills.map((w) =>
-          w.id === pageData.currentWaybillId ? { ...w, stops } : w
-        )
-        useOrderStore.getState().setDeliveryForm({ ...df, ftlWaybills: updatedWbs })
-      }
+      console.log('[ADDR-SAVE] saved LTL waybills:', ltlWaybills.length)
+    } else if (pageData.currentWaybillId && df.deliveryMode === 'full_load') {
+      const updatedWbs = df.ftlWaybills.map((w) =>
+        w.id === pageData.currentWaybillId ? { ...w, stops } : w
+      )
+      useOrderStore.getState().setDeliveryForm({ ...df, ftlWaybills: updatedWbs })
+      console.log('[ADDR-SAVE] saved FTL waybill, stop addr:', stops[0]?.address)
+    }
+
+    const afterDf = useOrderStore.getState().deliveryForm
+    if (afterDf.deliveryMode === 'full_load') {
+      console.log('[ADDR-SAVE] verify - first wb first stop:', afterDf.ftlWaybills[0]?.stops[0]?.address)
     }
     popPage();
   };
