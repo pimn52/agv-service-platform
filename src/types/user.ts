@@ -16,12 +16,4 @@ export interface Organization {
   contactPhone: string;
 }
 
-export interface InvoiceInfo {
-  id: string;
-  orderId: string;
-  type: 'normal' | 'special';  // 普票/专票
-  title: string;
-  amount: number;
-  status: 'pending' | 'issued' | 'cancelled';
-  issuedAt?: string;
-}
+// InvoiceInfo 统一定义在 order.ts

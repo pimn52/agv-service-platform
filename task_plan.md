@@ -1,61 +1,106 @@
-# 任务计划：项目熟悉与环境就绪检查
+# 任务计划
 
-## 目标
-全面了解 AGV service platform-APP 项目结构，确认本地开发部署环境是否准备就绪，识别并修复环境缺口。
+> **依赖关系**：被 `CLAUDE.md` 触发规则读取、`progress.md` 每会话同步。关联 `architecture-decisions.md`（决策）、`business-flows.md`（业务流）
 
-## 当前阶段
-阶段 2 → 待进入阶段 3
+> 城市无人车综合服务 B2B 平台客户端（演示版）
+> 三条业务线：物流配送 / 巡游贩卖 / 安防巡检
 
-## 各阶段
+---
 
-### 阶段 1：项目探索与发现
-- [x] 了解项目整体目录结构
-- [x] 识别技术栈（框架、语言、构建工具等）
-- [x] 理解核心业务模块和页面架构
-- [x] 检查文档（README、AGENTS.md）
-- [x] 将发现记录到 findings.md
-- **状态：** complete
+## 整体进度
 
-### 阶段 2：环境就绪检查
-- [x] 检查 Node.js 版本
-- [x] 检查 pnpm 是否可用
-- [x] 检查 Git 仓库状态
-- [x] 检查 node_modules 依赖安装状态
-- [x] 检查环境变量文件 (.env)
-- [x] 识别并列出环境缺口
-- **状态：** complete
+| # | 阶段 | 状态 |
+|---|------|:--:|
+| 1 | 基础架构：策略对齐 + 演示数据 + 导览 | ✅ |
+| 2 | 物流配送：术语重构 + 业务模型深化 | ✅ |
+| 3 | 物流配送：下单页重构（整车/散件双线） | ✅ |
+| 4 | 物流配送：运营模型落地（运单/格口/趟次） | ✅ |
+| 5 | 物流配送：经停点状态机解耦 + 异常处理 | ✅ |
+| 6 | 物流配送：签收交接凭证 + 运营看板 | ✅ |
+| 7 | 物流配送：返利 Bug + 车型方案 + 费用展示对齐 + 封板 | ✅ |
+| 8 | 认证体系：登录/注册 + Supabase 对接 + 演示切换 | ✅ |
+| 9 | 可信度体系：模拟标记 + 平台架构页 + 演示说明书 + 品牌栏 | ✅ |
+| 10 | 数据流收口：Order 构建/变更/读取三层唯一入口 | ✅ |
+| 11 | 部署：Supabase 迁移完成，待 Git+GitHub+Vercel | 🔜 |
+| 12 | 巡游贩卖：术语审视 + 业务模型深化 | 🔜 |
+| 13 | 安防巡检：术语审视 + 业务模型深化 | 🔜 |
 
-### 阶段 3：环境修复与初始化
-- [ ] 安装 pnpm
-- [ ] 安装项目依赖 (pnpm install)
-- [ ] 初始化 Git 仓库
-- [ ] 创建必要的 .env 文件
-- [ ] 验证项目可正常构建/运行
-- **状态：** pending
+---
 
-### 阶段 4：总结与报告
-- [ ] 汇总环境检查结果
-- [ ] 输出完整报告给用户
-- **状态：** pending
+## 当前阶段：数据流收口完成，物流配送 FTL/LTL 对齐待续
 
-## 关键问题
-1. 后续需要对接哪个后端/数据库？目前 Drizzle + PostgreSQL + Supabase 依赖已安装但未配置。
-2. 是否需要连接真实的 Coze 部署平台？还是纯本地开发？
-3. 是否需要初始化 Git 并创建首次提交？
+### 数据流收口已完成
 
-## 已做决策
-| 决策 | 理由 |
+| 层 | 文件 | 职责 |
+|------|------|------|
+| 构建层 | `src/lib/order-factory.ts` | buildOrder / buildDemoOrder — 创建 Order 的唯一入口 |
+| 变更层 | `src/lib/order-mutator.ts` | applyMutation(order, action) — 状态变更唯一入口，status 自动派生 |
+| 读取层 | `src/lib/order-reader.ts` | getOrderStops / getOrderAddresses / getOrderSummary 等 — 权威读取函数 |
+
+**旧代码已迁移**：data/orders.ts（两套构造→工厂）、use-order-store.ts（三个方法→mutator）、order-dynamics-helpers.ts（68行→11行，委托给 reader）
+
+### 物流配送已完成
+
+| 能力 | 状态 | 关键文件 |
+|------|:--:|------|
+| 整车配送下单（运单列表+经停点+车型） | ✅ | `delivery-order-page.tsx` |
+| 散件直送下单（运单列表+自动拼车） | ✅ | `delivery-order-page.tsx` |
+| 经停点级状态机（stopStatus 解耦） | ✅ | `use-order-store.ts` L272-320 |
+| 多站卸货逐站推进 + 收货人不在自动跳过 | ✅ | `order-dynamics.tsx`, `use-demo-timers.ts` |
+| 签收三态确认（正常/轻微异常/严重异常） | ✅ | `confirm-dialog.tsx` |
+| 交接记录自动生成（HandoverRecord） | ✅ | `use-order-store.ts` advanceStopStatus |
+| 运单层状态机（散件） | ✅ | `use-order-store.ts` updateWaybillStatus |
+| 运营看板（业务线×Tab×四指标） | ✅ | `profile-page.tsx`（新增区块） |
+| 页面架构统一（首页/追踪/订单/我的） | ✅ | `findings.md` 页面架构章节 |
+| 术语体系（整车装/卸、散件投/取，代码层行业标准） | ✅ | `memory/terminology.md` |
+| 拼车返利 | ⚠️ | `payment-result-page.tsx` L33-59 返利不触发（reset 时序 Bug） |
+
+### 物流配送待修
+
+| 事项 | 优先级 | 说明 |
+|------|:--:|------|
+| LTL 返利不触发 | ✅ | 已修：`payment-result-page.tsx` 改从 `getOrderById()` 读真实订单数据，不再依赖 `deliveryForm` |
+
+---
+
+## 贩卖板块待审视
+
+| 维度 | 当前状态 | 需要做的 |
+|------|----------|----------|
+| 术语 | 未审查 | "巡游贩卖/安防巡检"产品名称是否精准？操作术语（开始行程/暂停贩卖/交还车辆）是否专业？ |
+| 业务模型 | 停留在表单层 | 套餐的"按天定价"与 constants 的"一次性定价"数据双重且不一致 |
+| 运营深度 | 浅 | 没有类似物流的"格口/运单/趟次"三层模型——贩卖的等价物是什么？货架管理？补货触发？收入结算？ |
+| 状态机 | 基本可用 | 贩卖中⇄暂停→结束，正确但不够细——是否缺少"补货中""设备故障""点位切换"等状态？ |
+| 演示说服力 | 一般 | 预期销售数据、ROI 计算是静态的 Mock，行业内人士会质疑数据来源 |
+
+---
+
+## 安防板块待审视
+
+| 维度 | 当前状态 | 需要做的 |
+|------|----------|----------|
+| 术语 | 未审查 | "巡检/设备测试/物资操作"是否精准？ |
+| 业务模型 | 停留在表单层 | 租赁方案（1/3/6 个月）直接套用传统设备租赁，安防巡检车的核心付费应是按覆盖面积+频次+视频存储 |
+| 运营深度 | 浅 | 没有告警联动、设备协议对接、巡检报告等核心能力的概念说明 |
+| 状态机 | 基本可用 | deviceTest 按钮无操作处理函数（死按钮）；物资操作只是布尔值切换 |
+| 演示说服力 | 弱 | 实时视频是 CSS 模拟的灰色盒子，行业内人士一眼看出是假的 |
+
+---
+
+## 技术债务
+
+| 事项 | 说明 |
 |------|------|
-| 使用 pnpm (而非 npm) 管理依赖 | package.json 使用 pnpm-lock.yaml，且脚本中使用 pnpm 命令 |
-| 运行环境为 Node.js 24 | .coze 配置文件指定 nodejs-24 |
+| Supabase 与前端类型脱节 | `order_logistics` 表缺少 stops/waybills/compartments/handoverRecords 等列；目前仅 demo 模式可用 |
+| 追踪页地图为占位符 | 没有接入真实地图 SDK（Amap/Mapbox） |
+| 路由规划页地图为占位符 | 同上 |
+| 巡游/安防定价数据双重 | `cruise-order-page.tsx` 和 `constants/services.ts` 各有一套定价 |
+| deviceTest 按钮无操作 | 安防巡检中的设备测试按钮没有 onClick |
+| route-planning "保存草稿"按钮无效 | 没有 onClick 处理函数 |
+| CostBreakdown 的 fen/yuan 单位混用 | Mock 数据用分（`1800`=18元），创建流程用元（`35`=35元） |
 
-## 遇到的错误
-| 错误 | 尝试次数 | 解决方案 |
-|------|---------|---------|
-| pnpm: command not found | 1 | 待通过 `corepack enable pnpm` 或 `npm install -g pnpm` 安装 |
+---
 
-## 备注
-- 项目从扣子(Coze)平台下载，原为在线开发环境
-- .coze 配置文件定义了部署到 Coze 平台的构建/运行/验证脚本
-- 暂无测试框架配置
-- 暂无 Docker/CI/CD 配置
+## 关键决策参考
+
+详见 `findings.md`（业务逻辑单一真相源）和 `memory/terminology.md`（术语规范）。

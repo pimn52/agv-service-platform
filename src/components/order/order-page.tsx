@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useAppStore, useOrderStore } from '@/store';
 import type { Order, ServiceType } from '@/types';
-import { SERVICES, ORDER_STATUS_MAP } from '@/constants/services';
-import { Truck, ShoppingCart, Shield, ChevronRight, FileText, MapPin } from 'lucide-react';
+import { SERVICES } from '@/constants/services';
+import { STATUS_LABELS } from '@/constants/status-labels';
+import { Truck, ShoppingCart, Shield, ChevronRight, FileText, MapPin, Trash2 } from 'lucide-react';
 
 const SERVICE_ICONS: Record<ServiceType, typeof Truck> = {
   logistics: Truck,
@@ -16,7 +17,7 @@ type FilterKey = 'all' | 'active' | 'completed';
 
 export function OrderPage() {
   const [filter, setFilter] = useState<FilterKey>('all');
-  const { orders, setOrderFilter, getOrdersByFilter } = useOrderStore();
+  const { orders, setOrderFilter, getOrdersByFilter, setActiveOrderId } = useOrderStore();
   const { pushPage, setTrackingOrderId, setActiveTab } = useAppStore();
 
   const filteredOrders = getOrdersByFilter();
@@ -24,6 +25,7 @@ export function OrderPage() {
   const handleOrderClick = (order: Order) => {
     if (order.status !== 'completed' && order.status !== 'cancelled') {
       setTrackingOrderId(order.id);
+      setActiveOrderId(order.id);
       setActiveTab('tracking');
     } else {
       pushPage({ key: 'order-detail', data: { orderId: order.id } });
@@ -78,13 +80,16 @@ export function OrderPage() {
 
 function OrderListItem({ order, onClick }: { order: Order; onClick: () => void }) {
   const config = SERVICES[order.serviceType];
-  const statusConfig = ORDER_STATUS_MAP[order.status];
+  const statusConfig = STATUS_LABELS[order.status];
   const Icon = SERVICE_ICONS[order.serviceType];
 
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
-      className="w-full bg-white rounded-xl p-3.5 shadow-sm text-left active:bg-[#FAFAFA] transition-colors"
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
+      className="w-full bg-white rounded-xl p-3.5 shadow-sm text-left active:bg-[#FAFAFA] transition-colors cursor-pointer"
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
@@ -97,22 +102,36 @@ function OrderListItem({ order, onClick }: { order: Order; onClick: () => void }
           <span className="text-[12px] text-[#999]">{config.label}</span>
           <span className="text-[12px] text-[#CCC]">#{order.id.slice(-8)}</span>
         </div>
-        <span
-          className="text-[11px] px-2 py-0.5 rounded-full"
-          style={{ color: statusConfig.color, backgroundColor: `${statusConfig.color}15` }}
-        >
-          {statusConfig.label}
-        </span>
+        <div className="flex items-center gap-1.5">
+          <span
+            className="text-[11px] px-2 py-0.5 rounded-full"
+            style={{ color: statusConfig.color, backgroundColor: `${statusConfig.color}15` }}
+          >
+            {statusConfig.label}
+          </span>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (window.confirm(`确认删除订单 #${order.id.slice(-8)}？此操作不可撤销。`)) {
+                useOrderStore.getState().deleteOrder(order.id);
+              }
+            }}
+            className="shrink-0 w-6 h-6 flex items-center justify-center rounded text-[#CCC] hover:text-[#FF4D4F] hover:bg-[#FFF2F0] active:bg-[#FFE5E5] transition-colors"
+            title="删除订单"
+          >
+            <Trash2 size="13" />
+          </button>
+        </div>
       </div>
 
       <div className="text-[13px] text-[#1A1A1A] mb-1">
         {order.serviceType === 'logistics' && (
           <span>{typeof order.senderAddress === 'string' ? order.senderAddress : order.senderAddress?.address?.split(' ')[0]} → {typeof order.receiverAddress === 'string' ? order.receiverAddress : order.receiverAddress?.address?.split(' ')[0]}</span>
         )}
-        {order.serviceType === 'vending' && order.cruiseType === 'vending' && (
+        {order.serviceType === 'vending' && (
           <span>巡游贩卖 · {order.pickupLocation}</span>
         )}
-        {order.serviceType === 'security' && order.cruiseType === 'security' && (
+        {order.serviceType === 'security' && (
           <span>安防巡检 · {order.pickupLocation}</span>
         )}
       </div>
@@ -120,13 +139,13 @@ function OrderListItem({ order, onClick }: { order: Order; onClick: () => void }
       <div className="flex items-center justify-between mt-2 pt-2 border-t border-[var(--border)]">
         <div className="flex items-center gap-3 text-[11px] text-[#999]">
           <span>{order.vehicleName}</span>
-          <span>¥{((order.actualCost ?? order.estimatedCost ?? 0) / 100).toFixed(2)}</span>
+          <span>¥{((order.actualCost ?? order.estimatedCost ?? order.amount ?? 0) / 100).toFixed(2)}</span>
         </div>
         <div className="flex items-center gap-1 text-[12px] text-[#1677FF]">
           {order.status === 'completed' ? '查看详情' : '查看追踪'}
           <ChevronRight size="14" />
         </div>
       </div>
-    </button>
+    </div>
   );
 }

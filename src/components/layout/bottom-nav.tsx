@@ -15,7 +15,7 @@ export function BottomNav() {
   const { activeTab, setActiveTab } = useAppStore();
 
   return (
-    <nav className="flex items-center justify-around border-t border-[var(--border)] bg-white h-[50px] flex-shrink-0 safe-area-bottom">
+    <nav id="tour-bottom-nav" className="flex items-center justify-around border-t border-[var(--border)] bg-white h-[50px] flex-shrink-0 safe-area-bottom">
       {TABS.map(({ key, label, icon: Icon }) => {
         const isActive = activeTab === key;
         return (

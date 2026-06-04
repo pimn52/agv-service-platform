@@ -15,7 +15,8 @@ import { InvoicePage } from '@/components/profile/invoice-page';
 import { AddressPage } from '@/components/profile/address-page';
 import { SettingsPage } from '@/components/profile/settings-page';
 import { RoutePlanningPage } from '@/components/order-create/route-planning-page';
-
+import { AddressEditPage } from '@/components/order-create/address-edit-page';
+import { PlatformArchitecturePage } from '@/components/shared/platform-architecture-page';
 const SUB_PAGE_TITLES: Record<SubPage['key'], string> = {
   'delivery-order': '配送下单',
   'cruise-order': '巡游租车下单',
@@ -30,6 +31,8 @@ const SUB_PAGE_TITLES: Record<SubPage['key'], string> = {
   address: '地址管理',
   settings: '设置',
   'route-plan': '路线规划',
+  'address-edit': '编辑地址',
+  'platform-architecture': '关于平台',
 };
 
 const SUB_PAGE_COMPONENTS: Record<SubPage['key'], React.ComponentType<{ page: SubPage }>> = {
@@ -46,10 +49,12 @@ const SUB_PAGE_COMPONENTS: Record<SubPage['key'], React.ComponentType<{ page: Su
   address: AddressPage,
   settings: SettingsPage,
   'route-plan': RoutePlanningPage,
+  'address-edit': AddressEditPage,
+  'platform-architecture': PlatformArchitecturePage as React.ComponentType<{ page: SubPage }>,
 };
 
 /** 这些页面自带返回按钮，不显示 sub-page-renderer 的顶部返回栏 */
-const PAGES_WITH_OWN_NAV = new Set<SubPage['key']>(['delivery-order', 'cruise-order', 'route-plan']);
+const PAGES_WITH_OWN_NAV = new Set<SubPage['key']>(['delivery-order', 'cruise-order', 'route-plan', 'address-edit']);
 
 export function SubPageRenderer() {
   const { pageStack, popPage } = useAppStore();

@@ -8,7 +8,7 @@
 // ─── 路线点位类型 ────────────────────────────
 
 /** 点位类型 */
-export type WaypointType = 'start' | 'end' | 'task_stop' | 'idle_stop' | 'pass_through';
+export type WaypointType = 'start' | 'end' | 'task_stop' | 'non_task_stop' | 'waypoint';
 
 /** 路线点位类型（RoutePoint 专用，与 WaypointType 保持一致） */
 export type RoutePointType = WaypointType;

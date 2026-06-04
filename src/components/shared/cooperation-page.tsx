@@ -1,6 +1,7 @@
 'use client';
 
 import type { SubPage } from '@/store';
+import { CONTACT } from '@/constants/services';
 
 export function CooperationPage({ page }: { page: SubPage }) {
   return (
@@ -30,8 +31,8 @@ export function CooperationPage({ page }: { page: SubPage }) {
       <div className="bg-white rounded-xl p-4 shadow-sm">
         <h3 className="text-[14px] font-medium text-[#1A1A1A] mb-3">联系我们</h3>
         <div className="space-y-2 text-[13px] text-[#666]">
-          <div>合作热线: 400-888-8888</div>
-          <div>商务邮箱: business@uav-service.com</div>
+          <div>合作热线: {CONTACT.serviceHotline}</div>
+          <div>商务邮箱: {CONTACT.businessEmail}</div>
         </div>
         <button className="w-full mt-4 py-2.5 bg-[#1677FF] text-white text-[14px] rounded-lg active:bg-[#0958D9] transition-colors">
           提交合作意向

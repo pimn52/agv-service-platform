@@ -1,9 +1,15 @@
 import { create } from 'zustand';
 import type { City } from '@/constants/cities';
 import type { ServiceType, AppNotification } from '@/types';
-import { MOCK_NOTIFICATIONS } from '@/mock/data';
 
 export type TabKey = 'home' | 'tracking' | 'order' | 'profile';
+
+export interface AddressEditData {
+  stops: import('@/types').RouteStop[];
+  mode?: 'full' | 'lcl';
+  ltlWaybills?: import('@/types').LTLWaybill[];
+  currentWaybillId?: string;
+}
 
 export type SubPage =
   | { key: 'delivery-order'; data?: { batchMode?: boolean } }
@@ -18,7 +24,9 @@ export type SubPage =
   | { key: 'invoice'; data?: { orderId?: string } }
   | { key: 'address' }
   | { key: 'settings' }
-  | { key: 'route-plan'; data?: { orderId?: string; serviceType?: ServiceType } };
+  | { key: 'route-plan'; data?: { orderId?: string; serviceType?: ServiceType } }
+  | { key: 'address-edit'; data: AddressEditData }
+  | { key: 'platform-architecture' };
 
 interface AppStore {
   // Tab 导航
@@ -45,6 +53,7 @@ interface AppStore {
 
   // 通知
   notifications: AppNotification[];
+  addNotification: (notification: AppNotification) => void;
   markNotificationRead: (id: string) => void;
   dismissNotification: (id: string) => void;
   postponeNotification: (id: string) => void;
@@ -77,10 +86,14 @@ export const useAppStore = create<AppStore>((set, get) => ({
   showServiceDialog: false,
   setShowServiceDialog: (show) => set({ showServiceDialog: show }),
 
-  notifications: MOCK_NOTIFICATIONS,
+  notifications: [],
   markNotificationRead: (id) =>
     set((s) => ({
       notifications: s.notifications.map((n) => (n.id === id ? { ...n, read: true } : n)),
+    })),
+  addNotification: (notification) =>
+    set((s) => ({
+      notifications: [notification, ...s.notifications],
     })),
   dismissNotification: (id) =>
     set((s) => ({

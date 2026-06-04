@@ -29,6 +29,7 @@ export function HomePage() {
           {/* 右侧：扫码按钮 */}
           <div className="w-20 flex justify-end">
             <button
+              id="tour-scanner"
               onClick={() => pushPage({ key: 'scanner' })}
               className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F5F6FA] active:bg-[#EEEEEE] transition-colors"
             >
@@ -44,18 +45,23 @@ export function HomePage() {
       </div>
 
       {/* 下单入口栏 */}
-      <div className="px-4 py-3">
+      <div id="tour-service-entry" className="px-4 py-3">
         <ServiceEntry />
       </div>
 
       {/* 订单服务动态面板 */}
-      <div className="px-4 pb-2">
+      <div id="tour-home-dynamics" className="px-4 pb-2">
         <OrderDynamics />
       </div>
 
       {/* 在线客服和企业合作 */}
-      <div className="px-4 pb-4">
+      <div className="px-4 pb-2">
         <ServiceLinks />
+      </div>
+
+      {/* 底部品牌栏 */}
+      <div className="px-4 pb-5 text-center">
+        <p className="text-[10px] text-[#CCC]">© 洪攀 · 城市无人车商用运营平台</p>
       </div>
     </div>
   );

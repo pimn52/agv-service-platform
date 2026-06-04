@@ -1,0 +1,5 @@
+- [术语规范](memory/terminology.md) — UI 标签/按钮/状态文案的唯一参照
+- [车型规格](memory/vehicle-specs.md) — 5+3+3 全真实车型参数
+- [测试账号](memory/test-account.md) — Supabase 测试账号
+- [Supabase 配置](memory/supabase-config.md) — 项目 URL/Key/数据库状态/认证配置
+- [部署清单](memory/deploy-checklist.md) — 上线仅剩 Git+GitHub+Vercel 两步

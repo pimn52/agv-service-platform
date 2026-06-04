@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm *)",
+      "Bash(grep *)",
+      "Bash(agent-browser *)",
+      "Bash(bb-browser *)",
+      "Bash(curl *)",
+      "Bash(taskkill *)",
+      "Bash(cat *)",
+      "Bash(ls *)",
+      "WebSearch",
+      "Skill(agent-browser)",
+      "Skill(agent-browser:*)",
+      "Read(//c/Users/ASUS/.claude/**)",
+      "Read(//c/Users/ASUS/Documents/AI coding/AGV service platform-APP/**)",
+      "Read(//c/Users/ASUS/AppData/Local/Temp/**)",
+      "Read(//tmp/**)",
+      "Bash(node -e ' *)",
+      "Bash(node \"c:/Users/ASUS/Documents/AI coding/AGV service platform-APP/scripts/fix-updatestatus.mjs\")",
+      "Bash(node \"c:/Users/ASUS/Documents/AI coding/AGV service platform-APP/scripts/fix-demo-timers.mjs\")",
+      "Skill(bb-browser)",
+      "Skill(bb-browser:*)"
+    ]
+  }
+}

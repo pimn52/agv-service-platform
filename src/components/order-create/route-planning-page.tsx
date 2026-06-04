@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { useAppStore } from '@/store';
+import { useAppStore, useOrderStore } from '@/store';
 import type { SubPage } from '@/store';
 import type { ServiceType } from '@/types';
+import type { WaypointType, TaskSegment } from '@/types/route-planning';
 import { RECOMMENDED_ROUTES } from '@/constants/services';
 import type { RecommendedRoute } from '@/constants/services';
 import {
@@ -23,11 +24,10 @@ import {
   Save,
   MapPinned,
   Navigation,
+  Repeat,
 } from 'lucide-react';
 
 /* ────────────────────────── 类型定义 ────────────────────────── */
-
-type WaypointType = 'start' | 'end' | 'task_stop' | 'non_task_stop' | 'waypoint';
 
 interface TaskOption {
   id: string;
@@ -43,13 +43,6 @@ interface Waypoint {
   name: string;
   duration: number;     // 停留时长（分钟），仅停留点
   tasks: string[];      // 选中的任务ID列表
-}
-
-interface SegmentTask {
-  id: string;
-  fromWaypointId: string;
-  toWaypointId: string;
-  tasks: string[];
 }
 
 /* ────────────────────────── 可用任务清单 ────────────────────────── */
@@ -241,10 +234,10 @@ function SegmentTaskItem({
   onUpdate,
   onDelete,
 }: {
-  segment: SegmentTask;
+  segment: TaskSegment;
   waypoints: Waypoint[];
   taskOptions: TaskOption[];
-  onUpdate: (id: string, updates: Partial<SegmentTask>) => void;
+  onUpdate: (id: string, updates: Partial<TaskSegment>) => void;
   onDelete: (id: string) => void;
 }) {
   const segTasks = taskOptions.filter((t) => t.forSegment);
@@ -297,6 +290,9 @@ export function RoutePlanningPage({ page }: { page: SubPage }) {
   const { popPage } = useAppStore();
   const pageData = (page as { key: string; data?: { orderId?: string; serviceType?: ServiceType } }).data;
   const serviceType = pageData?.serviceType ?? 'vending';
+  const orderId = pageData?.orderId;
+  const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
+  const [loopMode, setLoopMode] = useState(false);
 
   const taskOptions = serviceType === 'vending' ? VENDING_TASKS : SECURITY_TASKS;
 
@@ -307,7 +303,7 @@ export function RoutePlanningPage({ page }: { page: SubPage }) {
   ]);
 
   // 路段任务列表
-  const [segmentTasks, setSegmentTasks] = useState<SegmentTask[]>([]);
+  const [segmentTasks, setSegmentTasks] = useState<TaskSegment[]>([]);
 
   const updateWaypoint = useCallback((id: string, updates: Partial<Waypoint>) => {
     setWaypoints((prev) => prev.map((w) => (w.id === id ? { ...w, ...updates } : w)));
@@ -341,7 +337,7 @@ export function RoutePlanningPage({ page }: { page: SubPage }) {
     // 在相邻点位之间添加路段任务
     const editableWps = waypoints.filter((w) => w.type !== 'start' && w.type !== 'end');
     if (editableWps.length < 1) return;
-    const newSeg: SegmentTask = {
+    const newSeg: TaskSegment = {
       id: `seg-${Date.now()}`,
       fromWaypointId: waypoints[0]?.id ?? '',
       toWaypointId: waypoints[1]?.id ?? '',
@@ -350,7 +346,7 @@ export function RoutePlanningPage({ page }: { page: SubPage }) {
     setSegmentTasks((prev) => [...prev, newSeg]);
   }, [waypoints]);
 
-  const updateSegmentTask = useCallback((id: string, updates: Partial<SegmentTask>) => {
+  const updateSegmentTask = useCallback((id: string, updates: Partial<TaskSegment>) => {
     setSegmentTasks((prev) => prev.map((s) => (s.id === id ? { ...s, ...updates } : s)));
   }, []);
 
@@ -360,6 +356,7 @@ export function RoutePlanningPage({ page }: { page: SubPage }) {
 
   // 应用推荐路线
   const applyRecommendedRoute = useCallback((route: RecommendedRoute) => {
+    setSelectedRouteId(route.id);
     const newWaypoints: Waypoint[] = [
       { id: 'wp-start', type: 'start', name: '当前位置', duration: 0, tasks: [] },
     ];
@@ -409,8 +406,7 @@ export function RoutePlanningPage({ page }: { page: SubPage }) {
           <div className="bg-[#E8ECF0] rounded-xl h-[140px] flex items-center justify-center relative">
             <div className="text-center">
               <MapPinned className="w-7 h-7 mx-auto text-[#999999] mb-1" />
-              <p className="text-[11px] text-[#999999]">区域地图（MVP模拟）</p>
-              <p className="text-[9px] text-[#CCCCCC]">标注起点、停留点、经过点、终点</p>
+              <p className="text-[11px] text-[#999999]">路线预览</p>
             </div>
           </div>
         </div>
@@ -524,11 +520,11 @@ export function RoutePlanningPage({ page }: { page: SubPage }) {
             <div className="grid grid-cols-2 gap-2">
               <div className="p-2 bg-[#F5F6FA] rounded-lg">
                 <p className="text-[10px] text-[#999999]">总距离</p>
-                <p className="text-[14px] font-medium text-[#1A1A1A]">18.5<span className="text-[10px] text-[#999999] ml-0.5">km</span></p>
+                <p className="text-[14px] font-medium text-[#1A1A1A]">{RECOMMENDED_ROUTES.filter((r) => r.serviceType === serviceType)[0]?.distance ?? '--'}</p>
               </div>
               <div className="p-2 bg-[#F5F6FA] rounded-lg">
                 <p className="text-[10px] text-[#999999]">行驶时长</p>
-                <p className="text-[14px] font-medium text-[#1A1A1A]">约40<span className="text-[10px] text-[#999999] ml-0.5">分钟</span></p>
+                <p className="text-[14px] font-medium text-[#1A1A1A]">{RECOMMENDED_ROUTES.filter((r) => r.serviceType === serviceType)[0]?.duration ?? '--'}</p>
               </div>
               <div className="p-2 bg-[#F5F6FA] rounded-lg">
                 <p className="text-[10px] text-[#999999]">停留时长</p>
@@ -536,7 +532,7 @@ export function RoutePlanningPage({ page }: { page: SubPage }) {
               </div>
               <div className="p-2 bg-[#F5F6FA] rounded-lg">
                 <p className="text-[10px] text-[#999999]">总时长</p>
-                <p className="text-[14px] font-medium text-[#1A1A1A]">约{Math.ceil((40 + totalStopDuration) / 60 * 10) / 10}<span className="text-[10px] text-[#999999] ml-0.5">小时</span></p>
+                <p className="text-[14px] font-medium text-[#1A1A1A]">{RECOMMENDED_ROUTES.filter((r) => r.serviceType === serviceType)[0]?.duration ?? '--'}</p>
               </div>
             </div>
             <div className="flex gap-3 mt-2">
@@ -555,9 +551,23 @@ export function RoutePlanningPage({ page }: { page: SubPage }) {
       </div>
 
       {/* 底部确认按钮 */}
-      <div className="bg-white border-t border-[#EEEEEE] px-4 py-3">
+      <div className="bg-white border-t border-[#EEEEEE] px-4 py-3 space-y-2">
+        {serviceType === 'security' && (
+          <button
+            onClick={() => setLoopMode(!loopMode)}
+            className={`w-full flex items-center justify-center gap-2 py-2 rounded-xl text-[12px] font-medium transition-colors ${loopMode ? 'bg-[#E6F0FF] text-[#1677FF] border border-[#1677FF]' : 'bg-[#F5F6FA] text-[#666666] border border-[#EEEEEE]'}`}
+          >
+            <Repeat className={`w-3.5 h-3.5 ${loopMode ? 'text-[#1677FF]' : 'text-[#999999]'}`} />
+            {loopMode ? '循环巡航已开启' : '循环巡航'}
+          </button>
+        )}
         <button
-          onClick={() => popPage()}
+          onClick={() => {
+            if (orderId && selectedRouteId) {
+              useOrderStore.getState().updateOrderRoute(orderId, selectedRouteId)
+            }
+            popPage()
+          }}
           className="w-full py-2.5 bg-[#1677FF] text-white rounded-xl text-[14px] font-medium hover:bg-[#4096FF] active:bg-[#0958D9] transition-colors"
         >
           确认路线

@@ -18,7 +18,7 @@ export function ScannerPage({ page }: { page: SubPage }) {
         <div className="absolute bottom-0 right-0 w-5 h-5 border-b-[3px] border-r-[3px] border-[#1677FF]" />
       </div>
       <p className="text-[14px] text-[#1A1A1A] mb-1">将二维码放入框内扫描</p>
-      <p className="text-[12px] text-[#999]">扫描无人车上的二维码进行取件操作</p>
+      <p className="text-[12px] text-[#999] text-center">扫描无人车车身二维码，进行车厢开启、货物装卸、车辆状态查看等操作</p>
     </div>
   );
 }

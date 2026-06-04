@@ -15,10 +15,10 @@ export const SERVICES: Record<ServiceType, ServiceConfig> = {
     type: 'logistics',
     label: '配送下单',
     tabLabel: '物流配送',
-    description: '整车/零担',
+    description: '整车/散件',
     color: '#1677FF',
     bgColor: '#E6F0FF',
-    vehicleImage: '/vehicle-delivery.jfif',
+    vehicleImage: '/vehicle-delivery.png',
   },
   vending: {
     type: 'vending',
@@ -40,25 +40,20 @@ export const SERVICES: Record<ServiceType, ServiceConfig> = {
   },
 };
 
-// 状态标签配置
-export const ORDER_STATUS_MAP: Record<string, { label: string; color: string }> = {
-  pending: { label: '待确认', color: '#999999' },
-  pricing: { label: '计费中', color: '#1677FF' },
-  paying: { label: '待支付', color: '#FAAD14' },
-  dispatching: { label: '调度中', color: '#1677FF' },
-  picked_up: { label: '已出发', color: '#1677FF' },
-  in_transit: { label: '运输中', color: '#1677FF' },
-  arrived: { label: '已到达', color: '#52C41A' },
-  unloading: { label: '卸货中', color: '#1677FF' },
-  loading: { label: '装货中', color: '#1677FF' },
-  selling: { label: '贩卖中', color: '#52C41A' },
-  paused: { label: '已暂停', color: '#FAAD14' },
-  patrolling: { label: '巡检中', color: '#1677FF' },
-  completed: { label: '已完成', color: '#52C41A' },
-  cancelled: { label: '已取消', color: '#FF4D4F' },
-};
+// 状态标签已统一至 src/constants/status-labels.ts
+// 此处保留仅为向后兼容，新代码请使用 STATUS_LABELS
+import { STATUS_LABELS } from './status-labels'
+export const ORDER_STATUS_MAP = STATUS_LABELS
 
 // 颜色主题常量
+// 联系信息（统一管理，避免散落各处）
+export const CONTACT = {
+  serviceHotline: '400-888-8888',
+  businessEmail: 'business@uav-service.com',
+} as const;
+
+export const APP_VERSION = 'v1.0.0';
+
 export const COLORS = {
   primary: '#1677FF',
   primaryLight: '#E6F0FF',
@@ -89,7 +84,6 @@ export const SPECIAL_REQUIREMENTS: { key: SpecialRequirement; label: string; ico
   { key: 'cold_chain', label: '冷链运输', icon: '❄️' },
   { key: 'fragile', label: '易碎品', icon: '⚠️' },
   { key: 'oversized', label: '超大件', icon: '📦' },
-  { key: 'hazardous', label: '危险品', icon: '🔴' },
 ];
 
 // ─── 安防巡检租赁套餐 ────────────────────────────
@@ -157,23 +151,23 @@ export const RECOMMENDED_ROUTES: RecommendedRoute[] = [
 // ─── 车型配置 ────────────────────────────
 
 export const LOGISTICS_VEHICLE_MODELS = [
-  { id: 'lm_z2', name: 'Z2 小型配送车', loadCapacity: 300, cargoVolume: 2, range: 110, maxSpeed: 30, description: '封闭园区、社区窄路', imageUrl: '/vehicle-delivery.jfif' },
-  { id: 'lm_z5', name: 'Z5 中型配送车', loadCapacity: 800, cargoVolume: 5, range: 180, maxSpeed: 40, description: '城市物流主干道', imageUrl: '/vehicle-delivery.jfif' },
-  { id: 'lm_x3', name: 'X3 紧凑配送车', loadCapacity: 500, cargoVolume: 3, range: 100, maxSpeed: 60, description: '窄路运输、快递接驳', imageUrl: '/vehicle-delivery.jfif' },
-  { id: 'lm_x6', name: 'X6 标准配送车', loadCapacity: 800, cargoVolume: 6, range: 200, maxSpeed: 60, description: '城市配送、冷链', imageUrl: '/vehicle-delivery.jfif' },
-  { id: 'lm_p3', name: 'P3 模块配送车', loadCapacity: 800, cargoVolume: 3, range: 150, maxSpeed: 40, description: '原子柜分离、精准对接', imageUrl: '/vehicle-delivery.jfif' },
+  { id: 'lm_z2', name: 'Z2 小型配送车', loadCapacity: 300, cargoVolume: 2, range: 110, maxSpeed: 30, description: '窄路末端·社区·校园', imageUrl: '/vehicle-delivery.png' },
+  { id: 'lm_x3', name: 'X3 城配', loadCapacity: 520, cargoVolume: 3, range: 200, maxSpeed: 50, description: '城配主力·快递接驳', imageUrl: '/vehicle-delivery.png' },
+  { id: 'lm_z5', name: 'Z5 中型配送车', loadCapacity: 800, cargoVolume: 5, range: 180, maxSpeed: 40, description: '通用中型·可选冷链', imageUrl: '/vehicle-delivery.png' },
+  { id: 'lm_e6', name: 'E6 散件配送车', loadCapacity: 300, cargoVolume: 7.4, range: 120, maxSpeed: 40, description: '散件专车·无立柱超大容积', imageUrl: '/vehicle-delivery.png' },
+  { id: 'lm_x6', name: 'X6 重载', loadCapacity: 1130, cargoVolume: 6, range: 207, maxSpeed: 60, description: '大容量重载·商超补货', imageUrl: '/vehicle-delivery.png' },
 ] as const;
 
 export const VENDING_VEHICLE_MODELS = [
-  { id: 'vm_std', name: '标准贩卖车', shelfLayers: 4, compatiblePackages: ['vp_basic', 'vp_drink'], description: '商圈步行街、社区', imageUrl: '/vehicle-vending.png' },
-  { id: 'vm_large', name: '大型贩卖车', shelfLayers: 6, compatiblePackages: ['vp_full', 'vp_cold'], description: '大型社区、园区', imageUrl: '/vehicle-vending.png' },
-  { id: 'vm_drink', name: '饮品专车', shelfLayers: 8, compatiblePackages: ['vp_hotcold', 'vp_beverage'], description: '景区、夏季户外', imageUrl: '/vehicle-vending.png' },
+  { id: 'vm_std', name: '标准贩卖车', shelfLayers: 4, compatiblePackages: ['vp_basic'], description: '社区商圈·即停即走', imageUrl: '/vehicle-vending.png' },
+  { id: 'vm_smart', name: '智能零售专车', shelfLayers: 4, compatiblePackages: ['vp_smart'], description: 'LED互动屏·品牌零售', imageUrl: '/vehicle-vending.png' },
+  { id: 'vm_drink', name: '饮品专车', shelfLayers: 4, compatiblePackages: ['vp_drink'], description: '冷冻专车·7×24h', imageUrl: '/vehicle-vending.png' },
 ] as const;
 
 export const SECURITY_VEHICLE_MODELS = [
-  { id: 'sm_basic', name: '基础巡检车', patrolRange: 5, compatiblePackages: ['sp_basic'], description: '小区、小园区', imageUrl: '/vehicle-security.png' },
-  { id: 'sm_std', name: '标准巡检车', patrolRange: 10, compatiblePackages: ['sp_standard'], description: '商圈、厂区', imageUrl: '/vehicle-security.png' },
-  { id: 'sm_adv', name: '高级巡检车', patrolRange: 15, compatiblePackages: ['sp_advanced'], description: '大型园区、交通枢纽', imageUrl: '/vehicle-security.png' },
+  { id: 'sm_basic', name: '基础巡检车', patrolRange: 5, compatiblePackages: ['sp_basic'], description: '智慧园区·社区·学校', imageUrl: '/vehicle-security.png' },
+  { id: 'sm_std', name: '标准巡检车', patrolRange: 10, compatiblePackages: ['sp_standard'], description: '陆空一体·立体巡检', imageUrl: '/vehicle-security.png' },
+  { id: 'sm_adv', name: '移动哨兵车', patrolRange: 15, compatiblePackages: ['sp_advanced'], description: 'AI取证·应急响应·AED', imageUrl: '/vehicle-security.png' },
 ] as const;
 
 // ─── 配套套餐 ────────────────────────────
@@ -184,66 +178,45 @@ export const VENDING_PACKAGES = [
     name: '基础货架套餐',
     compatibleModels: ['vm_std'],
     items: [{ name: '4层标准货架', quantity: 1 }, { name: '商品标签屏', quantity: 1 }],
-    price: 5000,
+    price: 298,
+  },
+  {
+    id: 'vp_smart',
+    name: '互动零售套餐',
+    compatibleModels: ['vm_smart'],
+    items: [{ name: 'LED互动屏', quantity: 1 }, { name: '透明展示货柜', quantity: 1 }, { name: '商品标签屏', quantity: 1 }],
+    price: 498,
   },
   {
     id: 'vp_drink',
     name: '饮品专供套餐',
-    compatibleModels: ['vm_std'],
+    compatibleModels: ['vm_drink'],
     items: [{ name: '4层冷藏货架', quantity: 1 }, { name: '温控系统', quantity: 1 }],
-    price: 8000,
-  },
-  {
-    id: 'vp_full',
-    name: '全品类货架套餐',
-    compatibleModels: ['vm_large'],
-    items: [{ name: '6层标准货架', quantity: 1 }, { name: '商品标签屏', quantity: 2 }],
-    price: 7000,
-  },
-  {
-    id: 'vp_cold',
-    name: '冷藏货架套餐',
-    compatibleModels: ['vm_large'],
-    items: [{ name: '6层冷藏货架', quantity: 1 }, { name: '温控系统', quantity: 2 }],
-    price: 12000,
-  },
-  {
-    id: 'vp_hotcold',
-    name: '冷热双温套餐',
-    compatibleModels: ['vm_drink'],
-    items: [{ name: '4层冷藏+4层保温货架', quantity: 1 }, { name: '双温控系统', quantity: 1 }],
-    price: 15000,
-  },
-  {
-    id: 'vp_beverage',
-    name: '饮料专供套餐',
-    compatibleModels: ['vm_drink'],
-    items: [{ name: '8层冷藏货架', quantity: 1 }, { name: '自动出货系统', quantity: 1 }],
-    price: 13000,
+    price: 398,
   },
 ] as const;
 
 export const SECURITY_PACKAGES = [
   {
     id: 'sp_basic',
-    name: '基础监控套餐',
+    name: '基础巡检套餐',
     compatibleModels: ['sm_basic'],
-    items: [{ name: '1路高清摄像头', quantity: 1 }, { name: '警示灯', quantity: 1 }, { name: '语音播报', quantity: 1 }],
-    price: 6000,
+    items: [{ name: '高清摄像头', quantity: 1 }, { name: '报警器', quantity: 1 }, { name: '广播系统', quantity: 1 }],
+    price: 398,
   },
   {
     id: 'sp_standard',
-    name: '标准监控套餐',
+    name: '标准巡检套餐',
     compatibleModels: ['sm_std'],
-    items: [{ name: '2路高清摄像头', quantity: 1 }, { name: '红外夜视', quantity: 1 }, { name: '双向对讲', quantity: 1 }, { name: '警示灯', quantity: 1 }],
-    price: 12000,
+    items: [{ name: '高清摄像头', quantity: 2 }, { name: '红外夜视', quantity: 1 }, { name: '双向对讲', quantity: 1 }, { name: '报警器', quantity: 1 }],
+    price: 598,
   },
   {
     id: 'sp_advanced',
-    name: '高级监控套餐',
+    name: '安防应急套餐',
     compatibleModels: ['sm_adv'],
-    items: [{ name: '4路高清摄像头', quantity: 1 }, { name: '热成像', quantity: 1 }, { name: '双向对讲', quantity: 1 }, { name: '显示屏', quantity: 1 }, { name: '警示灯', quantity: 1 }, { name: '声光报警', quantity: 1 }],
-    price: 25000,
+    items: [{ name: '高清摄像头', quantity: 4 }, { name: '热成像', quantity: 1 }, { name: '双向对讲', quantity: 1 }, { name: '显示大屏', quantity: 1 }, { name: '警示灯', quantity: 1 }, { name: '警报器', quantity: 1 }],
+    price: 898,
   },
 ] as const;
 

@@ -47,7 +47,7 @@ export function ServiceEntry() {
         </div>
         <div className="text-left min-w-0">
           <p className="text-[14px] text-[#1A1A1A] leading-tight">配送下单</p>
-          <p className="text-[11px] text-[#999999] mt-0.5">整车/零担</p>
+          <p className="text-[11px] text-[#999999] mt-0.5">整车/散件</p>
         </div>
       </button>
 

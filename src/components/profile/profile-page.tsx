@@ -1,13 +1,24 @@
 'use client';
 
-import { useUserStore, useAppStore } from '@/store';
-import { User, ChevronRight, Wallet, FileText, MapPin, HelpCircle, Info, Settings, Building2, Phone } from 'lucide-react';
+import { useUserStore, useAppStore, useAuthStore } from '@/store';
+import { CONTACT } from '@/constants/services';
+import { User, ChevronRight, Wallet, FileText, MapPin, HelpCircle, Info, Settings, Building2, Phone, Eye } from 'lucide-react';
+import { OperationsDashboard } from './operations-dashboard';
 
 export function ProfilePage() {
   const { user } = useUserStore();
   const { pushPage } = useAppStore();
+  const demoMode = useAuthStore((s) => s.demoMode);
+  const setDemoMode = useAuthStore((s) => s.setDemoMode);
+  const exitDemoMode = useAuthStore((s) => s.exitDemoMode);
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-full bg-[var(--background)]">
+        <p className="text-[13px] text-[#999]">请先登录</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-full bg-[var(--background)]">
@@ -44,6 +55,9 @@ export function ProfilePage() {
         </div>
       </div>
 
+      {/* 运营看板 */}
+      <OperationsDashboard />
+
       {/* 功能菜单 */}
       <div className="mt-2 bg-white">
         <MenuGroup
@@ -58,17 +72,37 @@ export function ProfilePage() {
       <div className="mt-2 bg-white">
         <MenuGroup
           items={[
+            { icon: Info, label: '关于平台', onClick: () => pushPage({ key: 'platform-architecture' }) },
             { icon: HelpCircle, label: '帮助中心', onClick: () => {} },
-            { icon: Info, label: '关于我们', onClick: () => {} },
             { icon: Settings, label: '设置', onClick: () => pushPage({ key: 'settings' }) },
           ]}
         />
       </div>
 
+      {/* 演示切换 */}
+      <div className="mt-4 mx-4">
+        {demoMode ? (
+          <button
+            onClick={() => exitDemoMode()}
+            className="w-full py-2.5 border border-[#1677FF] text-[#1677FF] text-[13px] font-medium rounded-xl active:bg-[#E6F0FF] transition-colors"
+          >
+            退出演示，回到我的账号
+          </button>
+        ) : (
+          <button
+            onClick={() => setDemoMode()}
+            className="w-full py-2.5 border border-dashed border-[#1677FF] text-[#1677FF] text-[13px] font-medium rounded-xl active:bg-[#E6F0FF] transition-colors flex items-center justify-center gap-1.5"
+          >
+            <Eye size="14" />
+            进入演示体验
+          </button>
+        )}
+      </div>
+
       {/* 客服电话 */}
-      <div className="mt-4 flex items-center justify-center gap-1.5 text-[12px] text-[#999]">
+      <div className="mt-4 mb-6 flex items-center justify-center gap-1.5 text-[12px] text-[#999]">
         <Phone size="12" />
-        客服热线: 400-888-8888
+        客服热线: {CONTACT.serviceHotline}
       </div>
     </div>
   );
