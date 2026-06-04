@@ -70,6 +70,7 @@ export function AddressEditPage({ page }: { page: SubPage }) {
   const handleSave = () => {
     // 直接写入 deliveryForm（而非 pendingAddressForm 中转），
     // 避免组件重挂载时 savedForm 恢复覆盖掉地址更新。
+    console.log('[addr-save] isWaybill:', isWaybill, 'currentWaybillId:', pageData.currentWaybillId, 'stops:', JSON.stringify(stops.map(s => ({id:s.id,addr:s.address}))), 'df.mode:', useOrderStore.getState().deliveryForm?.deliveryMode)
     const df = useOrderStore.getState().deliveryForm
     if (isWaybill) {
       useOrderStore.getState().setDeliveryForm({ ...df, deliveryMode: 'ltl', ltlWaybills } as typeof df)
