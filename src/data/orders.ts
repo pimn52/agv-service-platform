@@ -59,8 +59,8 @@ function mapOrderRow(row: Record<string, unknown>): Order {
 
 /** 查询用户的所有订单。演示订单作为基础体验数据，用户自有订单混排在上方 */
 export async function getOrders(userId: string): Promise<Order[]> {
-  // 真实用户白板账号，不注入演示数据；演示用户加载全部演示订单
-  const baseOrders = isDemoUser(userId) ? MOCK_ORDERS : []
+  // 演示用户不调用 Supabase（避免国内网络阻断），直接返回演示订单
+  if (isDemoUser(userId)) return MOCK_ORDERS
 
   const supabase = createClient()
   const { data } = await supabase
@@ -73,11 +73,7 @@ export async function getOrders(userId: string): Promise<Order[]> {
     .map((row) => mapOrderRow(row as unknown as Record<string, unknown>))
     .filter((o): o is Order => o !== null)
 
-  // 去重：自有订单已含在 MOCK_ORDERS 中则跳过
-  const ownIds = new Set(ownOrders.map((o) => o.id))
-  const filteredBase = baseOrders.filter((o) => !ownIds.has(o.id))
-
-  return [...ownOrders, ...filteredBase]
+  return ownOrders
 }
 
 /** 创建订单。工厂构建 + 格口分配逻辑共享，仅持久化层区分 demo/真实用户。 */

@@ -34,20 +34,22 @@ export const useAuthStore = create<AuthState>((set) => {
     demoMode: false,
 
     initialize: async () => {
-      // 检查是否存在演示模式 cookie/session
-      const supabase = createClient()
-      const { data: { session } } = await supabase.auth.getSession()
+      try {
+        const supabase = createClient()
+        const { data: { session } } = await supabase.auth.getSession()
 
-      if (session?.user) {
-        set({ user: session.user, loading: false, initialized: true })
-      } else {
-        // 没有登录 session——等用户决定（登录 or 演示模式）
-        set({ user: null, loading: false, initialized: true })
+        if (session?.user) {
+          set({ user: session.user, loading: false, initialized: true })
+          supabase.auth.onAuthStateChange((_event, session) => {
+            set({ user: session?.user ?? null })
+          })
+          return
+        }
+      } catch {
+        // Supabase 不可达（如国内网络阻断），静默降级，由用户选择演示模式
       }
-
-      supabase.auth.onAuthStateChange((_event, session) => {
-        set({ user: session?.user ?? null })
-      })
+      // 没有登录 session 或 Supabase 不可达——等用户决定（登录 or 演示模式）
+      set({ user: null, loading: false, initialized: true })
     },
 
     // 进入演示模式——跳过认证，使用模拟用户
