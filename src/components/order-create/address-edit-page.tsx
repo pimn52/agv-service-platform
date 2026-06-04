@@ -71,9 +71,7 @@ export function AddressEditPage({ page }: { page: SubPage }) {
     const payload = isWaybill
       ? { mode: 'lcl' as const, ltlWaybills }
       : { mode: 'full' as const, stops, currentWaybillId: pageData.currentWaybillId }
-    console.log('[address-edit save] writing to sessionStorage:', JSON.stringify(payload).slice(0, 200))
     sessionStorage.setItem('agv-addr-pending', JSON.stringify(payload))
-    console.log('[address-edit save] sessionStorage set done. popping...')
     popPage();
   };
 

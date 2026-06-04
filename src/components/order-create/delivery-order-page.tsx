@@ -232,10 +232,8 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
   const savedForm = useOrderStore((s) => s.deliveryForm);
   const mountIdRef = useRef(0);
   useEffect(() => {
-    console.log('[delivery-page mount] effect running. mountIdRef:', mountIdRef.current)
     // 首次挂载：先检查 sessionStorage 是否有地址编辑的待提交数据（优先级最高）
     const raw = sessionStorage.getItem('agv-addr-pending')
-    console.log('[delivery-page mount] sessionStorage raw:', raw ? raw.slice(0, 100) : 'null')
     if (raw) {
       sessionStorage.removeItem('agv-addr-pending')
       try {
