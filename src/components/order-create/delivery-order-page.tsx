@@ -335,7 +335,8 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
   const costEst = (() => {
     if (mode === 'full') {
       const wbCount = ftlWaybills.length;
-      if (wbCount === 0) return null;
+      if (wbCount === 0 || ftlWaybills.every((w) => !w.vehicleModelId)) return null;
+      // FTL：一张运单的装货地址都没填时不显示价格
       const m: Record<string, number> = { lm_z2: 0.7, lm_z5: 1.0, lm_x3: 0.85, lm_x6: 1.2, lm_e6: 0.9 };
       // 按每张运单的车型分别计算再汇总（单位：分）
       let total = 0;
@@ -365,6 +366,8 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
       return { distanceFee: totalDistanceFee, discount: totalDiscount, baseFee: totalBaseFee, surcharge: totalSurcharge, insuranceFee: totalInsurance, nightDiscount: totalNightDiscount, total, perOrder: total / wbCount, orderCount: wbCount, coldChainCount: 0, rebateResult: null as RebateResult | null };
     }
     const n = ltlWaybills.length;
+    // LTL：没有投件地址时不显示价格（与 FTL 车型检查对齐）
+    if (n === 0 || ltlWaybills.every((w) => !w.pickupAddress)) return null;
     const baseFeePer = 2000;                               // ¥20/运单
     const insurancePer = 200;                              // ¥2/运单
     const baseFee = baseFeePer * n;
