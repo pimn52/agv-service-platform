@@ -335,9 +335,7 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
   const costEst = (() => {
     if (mode === 'full') {
       const wbCount = ftlWaybills.length;
-      if (wbCount === 0 || ftlWaybills.every((w) => !w.vehicleModelId)) return null;
-      // FTL：任一张运单都没填装货地址时也不出价格
-      if (ftlWaybills.every((w) => w.stops.every((s) => !s.address))) return null;
+      if (wbCount === 0) return null;
       const m: Record<string, number> = { lm_z2: 0.7, lm_z5: 1.0, lm_x3: 0.85, lm_x6: 1.2, lm_e6: 0.9 };
       // 按每张运单的车型分别计算再汇总（单位：分）
       let total = 0;
@@ -367,8 +365,6 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
       return { distanceFee: totalDistanceFee, discount: totalDiscount, baseFee: totalBaseFee, surcharge: totalSurcharge, insuranceFee: totalInsurance, nightDiscount: totalNightDiscount, total, perOrder: total / wbCount, orderCount: wbCount, coldChainCount: 0, rebateResult: null as RebateResult | null };
     }
     const n = ltlWaybills.length;
-    // LTL：一个地址都没填时不出价格（与 FTL 对齐）
-    if (n === 0 || ltlWaybills.every((w) => !w.pickupAddress && !w.deliveryAddress)) return null;
     const baseFeePer = 2000;                               // ¥20/运单
     const insurancePer = 200;                              // ¥2/运单
     const baseFee = baseFeePer * n;
@@ -551,10 +547,10 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
                               <span className={`text-[12px] font-bold ${iconColor}`}>{iconLabel}</span>
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className={`text-[12px] truncate ${s.address ? 'text-[#1A1A1A]' : 'text-[#FF4D4F]'}`}>
+                              <p className="text-[12px] text-[#1A1A1A] truncate">
                                 {s.address || (isPickup ? '请填写装货地址' : '请填写卸货地址')}
                               </p>
-                              <p className={`text-[10px] mt-0.5 truncate ${s.contactName ? 'text-[#999999]' : 'text-[#FF4D4F]'}`}>
+                              <p className="text-[10px] text-[#999999] mt-0.5 truncate">
                                 {s.contactName ? `${s.contactName} · ${s.contactPhone}` : '请填写联系人'}
                               </p>
                             </div>
@@ -664,15 +660,15 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
                     <div className="flex items-center gap-3">
                       <div className="w-7 h-7 rounded-full bg-[#E6F0FF] flex items-center justify-center shrink-0 shadow-sm"><span className="text-[13px] font-bold text-[#1677FF]">发</span></div>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-[13px] truncate ${w.pickupAddress ? 'text-[#1A1A1A]' : 'text-[#FF4D4F]'}`}>{w.pickupAddress || '请填写投件地址'}</p>
-                        <p className={`text-[11px] mt-0.5 truncate ${w.pickupContactName ? 'text-[#999999]' : 'text-[#FF4D4F]'}`}>{w.pickupContactName ? `${w.pickupContactName} · ${w.pickupContactPhone}` : '请填写联系人'}</p>
+                        <p className="text-[13px] text-[#1A1A1A] truncate">{w.pickupAddress || '请填写投件地址'}</p>
+                        <p className="text-[11px] text-[#999999] mt-0.5 truncate">{w.pickupContactName ? `${w.pickupContactName} · ${w.pickupContactPhone}` : '请填写联系人'}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 mt-1.5">
                       <div className="w-7 h-7 rounded-full bg-[#F6FFED] flex items-center justify-center shrink-0 shadow-sm"><span className="text-[13px] font-bold text-[#52C41A]">收</span></div>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-[13px] truncate ${w.deliveryAddress ? 'text-[#1A1A1A]' : 'text-[#FF4D4F]'}`}>{w.deliveryAddress || '请填写取件地址'}</p>
-                        <p className={`text-[11px] mt-0.5 truncate ${w.deliveryContactName ? 'text-[#999999]' : 'text-[#FF4D4F]'}`}>{w.deliveryContactName ? `${w.deliveryContactName} · ${w.deliveryContactPhone}` : '请填写联系人'}</p>
+                        <p className="text-[13px] text-[#1A1A1A] truncate">{w.deliveryAddress || '请填写取件地址'}</p>
+                        <p className="text-[11px] text-[#999999] mt-0.5 truncate">{w.deliveryContactName ? `${w.deliveryContactName} · ${w.deliveryContactPhone}` : '请填写联系人'}</p>
                       </div>
                     </div>
                   </button>
@@ -795,7 +791,7 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
       <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-[#EEEEEE] px-4 py-3 z-10">
         <div className="flex items-center gap-3">
           <div className="flex-1 min-w-0">{costEst && <div className="flex items-baseline gap-1"><span className="text-[12px] text-[#666666]">{displayLabel}</span><span className="text-[20px] font-bold text-[#FF4D4F]">¥{(displayTotal / 100).toFixed(2)}</span></div>}</div>
-          <button onClick={handleSubmit} disabled={!costEst} className="shrink-0 px-8 py-2.5 bg-[#1677FF] text-white rounded-lg text-[14px] font-medium hover:bg-[#4096FF] active:bg-[#0958D9] transition-colors disabled:bg-[#CCCCCC] disabled:cursor-not-allowed">确认下单</button>
+          <button onClick={handleSubmit} className="shrink-0 px-8 py-2.5 bg-[#1677FF] text-white rounded-lg text-[14px] font-medium hover:bg-[#4096FF] active:bg-[#0958D9] transition-colors">确认下单</button>
         </div>
         {error && <p className="text-[11px] text-[#FF4D4F] text-center mt-1.5">{error}</p>}
       </div>
