@@ -8,6 +8,7 @@ export interface AddressEditData {
   stops: import('@/types').RouteStop[];
   mode?: 'full' | 'lcl';
   ltlWaybills?: import('@/types').LTLWaybill[];
+  ftlWaybills?: import('@/types').FTLWaybill[];
   currentWaybillId?: string;
 }
 

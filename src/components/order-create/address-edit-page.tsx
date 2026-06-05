@@ -68,9 +68,16 @@ export function AddressEditPage({ page }: { page: SubPage }) {
   };
 
   const handleSave = () => {
-    const payload = isWaybill
-      ? { mode: 'lcl' as const, ltlWaybills }
-      : { mode: 'full' as const, stops, currentWaybillId: pageData.currentWaybillId }
+    let payload: Record<string, unknown>;
+    if (isWaybill) {
+      payload = { mode: 'lcl', ltlWaybills };
+    } else {
+      // FTL：将编辑后的 stops 合并回完整 ftlWaybills，像 LTL 一样全量存
+      const mergedFtl = (pageData.ftlWaybills || []).map((fw) =>
+        fw.id === pageData.currentWaybillId ? { ...fw, stops } : fw
+      );
+      payload = { mode: 'full', ftlWaybills: mergedFtl, currentWaybillId: pageData.currentWaybillId };
+    }
     sessionStorage.setItem('agv-addr-pending', JSON.stringify(payload))
     popPage();
   };

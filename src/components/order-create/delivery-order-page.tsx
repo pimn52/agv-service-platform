@@ -242,10 +242,8 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
           setLtlWaybills(data.ltlWaybills)
           mountIdRef.current = Date.now()
           return // sessionStorage 数据优先，跳过 store 恢复
-        } else if (data.mode === 'full' && data.stops?.length && data.currentWaybillId) {
-          setFtlWaybills((prev) => prev.map((w) =>
-            w.id === data.currentWaybillId ? { ...w, stops: data.stops } : w
-          ))
+        } else if (data.mode === 'full' && data.ftlWaybills?.length) {
+          setFtlWaybills(data.ftlWaybills as FTLWaybill[])
           mountIdRef.current = Date.now()
           return // sessionStorage 数据优先
         }
@@ -542,7 +540,7 @@ export function DeliveryOrderPage({ page }: { page: SubPage }) {
                       return (
                         <div key={s.id} className="flex items-center gap-2.5 py-1.5 border-b border-[#F5F6FA] last:border-b-0">
                           <button
-                            onClick={() => { saveFormToStore(); pushPage({ key: 'address-edit', data: { stops: wb.stops, mode: 'full', currentWaybillId: wb.id } }); }}
+                            onClick={() => { saveFormToStore(); pushPage({ key: 'address-edit', data: { stops: wb.stops, mode: 'full', currentWaybillId: wb.id, ftlWaybills } }); }}
                             className="flex items-center gap-2.5 flex-1 min-w-0 text-left"
                           >
                             <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${iconBg} shadow-sm`}>
