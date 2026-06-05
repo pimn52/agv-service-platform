@@ -121,14 +121,19 @@ export function TourOverlay({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState(0)
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null)
   const [phoneRect, setPhoneRect] = useState<DOMRect | null>(null)
+  const [shellBorderRadius, setShellBorderRadius] = useState(44)
   const popupRef = useRef<HTMLDivElement>(null)
 
   const currentStep = TOUR_STEPS[step]
 
   const updateRects = useCallback(() => {
-    // 获取手机壳容器边界
+    // 获取手机壳容器边界和圆角
     const phone = document.querySelector('.phone-shell') as HTMLElement | null
-    if (phone) setPhoneRect(phone.getBoundingClientRect())
+    if (phone) {
+      setPhoneRect(phone.getBoundingClientRect())
+      const br = parseFloat(getComputedStyle(phone).borderRadius) || 44
+      setShellBorderRadius(br)
+    }
 
     const el = document.getElementById(currentStep.targetId)
     setTargetRect(el ? el.getBoundingClientRect() : null)
@@ -177,7 +182,7 @@ export function TourOverlay({ onClose }: { onClose: () => void }) {
       {phoneRect && (
         <div
           className="absolute overflow-hidden"
-          style={{ left: phoneRect.left, top: phoneRect.top, width: phoneRect.width, height: phoneRect.height, borderRadius: 44 }}
+          style={{ left: phoneRect.left, top: phoneRect.top, width: phoneRect.width, height: phoneRect.height, borderRadius: shellBorderRadius }}
         >
           {/* 遮罩层 */}
           <svg
