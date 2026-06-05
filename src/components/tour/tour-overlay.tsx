@@ -131,8 +131,8 @@ export function TourOverlay({ onClose }: { onClose: () => void }) {
     const phone = document.querySelector('.phone-shell') as HTMLElement | null
     if (phone) {
       setPhoneRect(phone.getBoundingClientRect())
-      const br = parseFloat(getComputedStyle(phone).borderRadius) || 44
-      setShellBorderRadius(br)
+      const br = parseFloat(getComputedStyle(phone).borderRadius)
+      setShellBorderRadius(Number.isNaN(br) ? 44 : br)
     }
 
     const el = document.getElementById(currentStep.targetId)
