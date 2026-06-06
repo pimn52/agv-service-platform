@@ -77,16 +77,16 @@ export function LandingPage() {
         {/* 核心数据 */}
         <div className="flex justify-center gap-8 mb-10">
           <div className="text-center">
-            <div className="text-[24px] font-bold text-[#1677FF]"><AnimatedNumber target={1286} /></div>
-            <div className="text-[11px] text-white/30 mt-1">今日订单</div>
+            <div className="text-[24px] font-bold text-[#1677FF]"><AnimatedNumber target={16000} suffix="+" /></div>
+            <div className="text-[11px] text-white/30 mt-1">累计部署 L4 无人车</div>
           </div>
           <div className="text-center">
-            <div className="text-[24px] font-bold text-[#52C41A]"><AnimatedNumber target={342} /></div>
-            <div className="text-[11px] text-white/30 mt-1">在途车辆</div>
+            <div className="text-[24px] font-bold text-[#52C41A]">1 亿<span className="text-[18px]">+</span></div>
+            <div className="text-[11px] text-white/30 mt-1">自动驾驶里程 (km)</div>
           </div>
           <div className="text-center">
-            <div className="text-[24px] font-bold text-[#FAAD14]"><AnimatedNumber target={10} /></div>
-            <div className="text-[11px] text-white/30 mt-1">服务城市</div>
+            <div className="text-[24px] font-bold text-[#FAAD14]"><AnimatedNumber target={60} suffix="+" /></div>
+            <div className="text-[11px] text-white/30 mt-1">覆盖城市</div>
           </div>
         </div>
 

@@ -2,7 +2,49 @@
 
 > **依赖关系**：被 `CLAUDE.md` 触发规则读取（会话结束写入、新任务先读）。关联 `task_plan.md`（阶段进度）、`findings.md`（决策记录）
 
-## 会话：2026-06-03（物流封板 Bug 修复）
+## 会话：2026-06-05 ~ 06-06（Vercel 部署 + 移动端适配 + Bug 修复收尾）
+
+### 地址编辑保存失效 ✅
+- **根因**：`delivery-order-page.tsx` 两个 `useEffect` 执行顺序竞态——sessionStorage 恢复先于 store 恢复，后者覆盖前者
+- **修复**：合并两 Effect 为一个，sessionStorage 数据优先，设 `mountIdRef` 阻断 store 恢复
+- **FTL 追加修复**：DeliveryOrderPage 重挂载时 `useState` 初始化新 ID，导致 sessionStorage 的 `currentWaybillId` 匹配失效。改为存全部 ftlWaybills 全量替换（与 LTL 对称）
+
+### 通知不消失 ✅
+- **根因**：通知重新生成时只保留 `postponed` 标记，没保留 `dismissed`
+- **修复**：`order-dynamics.tsx` 通知生成 effect 同步保留 `dismissedIds`
+
+### 多车 LTL 签收流程修复 ✅
+- `deriveOrderStatusFromLtlWbs`：多车时只有全车辆完成才返回 `completed`，未完成车辆取最紧急状态
+- `getActionsForOrder` `arrived` 分支：按车辆独立判断投件/取件，用 `handoverRecords` 区分第一/第二次到达
+- 多车 Tab 自动切换：当前车辆无待办时自动跳到有操作的车辆（FTL/LTL 双线）
+- 状态标签统一：删除自定义 `LTL_STATUS_LABEL`，全用 `STATUS_LABELS`
+
+### 移动端显示适配 ✅
+- `layout.tsx`：JS 运行时注入 `viewport-fit=cover`（绕过 Next.js 16 不渲染该属性的问题）
+- `globals.css`：phone-shell mobile 加 `padding-top/bottom: env(safe-area-inset-*)`
+- `page.tsx`：外层 `<div>` 全部加 `sm:` 前缀，PC 端不受影响
+- `app-shell.tsx`：移除冗余 safe-area spacer（phone-shell padding 已处理）
+- Tour 遮罩圆角：读取 phone-shell 实际 `borderRadius`，手机端显示为 0（消除与设备物理圆角不匹配的硬编码）
+
+### 下单页交互对齐 ✅
+- 确认下单按钮始终可点，点击触发表单校验 → 底部栏红色提示
+- FTL 无车型不显价、LTL 无地址不显价（costEst 空值检查）
+- 地址/联系人提示色恢复为灰色（红色仅用于底部校验提示）
+
+### Vercel 部署 ✅
+- 发现 Vercel 未连接 Git → 部署的是 CLI 手动上传的旧版本
+- 连接 GitHub 后 push 即可自动部署，验证 `viewport-fit`、`sm:` 前缀等生效
+
+### 涉及文件
+| 操作 | 文件 |
+|:--:|------|
+| 修改 | `src/app/layout.tsx`、`page.tsx`、`globals.css` |
+| 修改 | `src/components/layout/app-shell.tsx` |
+| 修改 | `src/components/home/order-dynamics.tsx` |
+| 修改 | `src/store/use-order-store.ts`、`src/lib/order-mutator.ts` |
+| 修改 | `src/components/order-create/delivery-order-page.tsx`、`address-edit-page.tsx` |
+| 修改 | `src/components/tour/tour-overlay.tsx` |
+| 修改 | `src/store/use-app-store.ts` |
 
 ### Bug 1：LTL 一订多车签收第一辆后结束订单 ✅
 - `use-order-store.ts` L244-269：`updateOrderStatus` 的 LTL 分支移除 `completed` 映射（不再批量推进全订单运单）
