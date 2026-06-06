@@ -82,7 +82,7 @@ export function LandingPage() {
           </div>
           <div className="text-center">
             <div className="text-[24px] font-bold text-[#52C41A]"><AnimatedNumber target={10000} suffix="W+" /></div>
-            <div className="text-[11px] text-white/30 mt-1">万公里</div>
+            <div className="text-[11px] text-white/30 mt-1">自动驾驶里程 (km)</div>
           </div>
           <div className="text-center">
             <div className="text-[24px] font-bold text-[#FAAD14]"><AnimatedNumber target={60} suffix="+" /></div>
