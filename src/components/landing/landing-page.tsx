@@ -81,7 +81,7 @@ export function LandingPage() {
             <div className="text-[11px] text-white/30 mt-1">累计部署 L4 无人车</div>
           </div>
           <div className="text-center">
-            <div className="text-[24px] font-bold text-[#52C41A]">1 亿<span className="text-[18px]">+</span></div>
+            <div className="text-[24px] font-bold text-[#52C41A]"><AnimatedNumber target={10000} suffix=" 万+ km" /></div>
             <div className="text-[11px] text-white/30 mt-1">自动驾驶里程 (km)</div>
           </div>
           <div className="text-center">
