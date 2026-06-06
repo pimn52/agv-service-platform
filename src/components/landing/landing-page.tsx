@@ -78,7 +78,7 @@ export function LandingPage() {
         <div className="flex justify-center gap-8 mb-10">
           <div className="text-center">
             <div className="text-[24px] font-bold text-[#1677FF]"><AnimatedNumber target={16} suffix="K+" /></div>
-            <div className="text-[11px] text-white/30 mt-1 whitespace-nowrap">行业累计部署 L4</div>
+            <div className="text-[11px] text-white/30 mt-1 whitespace-nowrap">行业部署 L4(台)</div>
           </div>
           <div className="text-center">
             <div className="text-[24px] font-bold text-[#52C41A]"><AnimatedNumber target={100} suffix="M+" /></div>
