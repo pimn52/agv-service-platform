@@ -103,3 +103,4 @@ Desktop.ini
 
 # Claude Code 项目配置（含可能的 API 密钥）
 .claude/
+!.claude/skills/
