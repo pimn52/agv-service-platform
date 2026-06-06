@@ -53,36 +53,36 @@ export function LandingPage() {
         <div className="absolute w-1 h-1 bg-[#1677FF] rounded-full top-2/5 left-3/4 animate-pulse" style={{ animationDelay: '2.4s' }} />
       </div>
 
-      <div className="relative z-10 text-center px-6 w-full max-w-sm">
+      <div className="relative z-10 text-center px-6 w-full max-w-sm -mt-10">
         {/* AGV 图标 */}
-        <div className="mb-10 text-[#1677FF]">
+        <div className="mb-6 text-[#1677FF]">
           <AgvIcon size={72} />
         </div>
 
         {/* 个人署名 */}
-        <p className="text-[13px] text-white/50 tracking-wider mb-5">
+        <p className="text-[13px] text-white/50 tracking-wider mb-4">
           洪攀 个人演示作品
         </p>
 
         {/* 产品定位 */}
-        <h1 className="text-[22px] font-bold tracking-wide mb-3">
+        <h1 className="text-[22px] font-bold tracking-wide mb-2">
           城市无人车商用运营产品
         </h1>
 
         {/* 副标题 */}
-        <p className="text-[13px] text-white/40 mb-8">
+        <p className="text-[13px] text-white/40 mb-10">
           企业级无人车调度 · 从下单到签收全程可视
         </p>
 
         {/* 核心数据 */}
-        <div className="flex justify-center gap-8 mb-12">
+        <div className="flex justify-center gap-8 mb-10">
           <div className="text-center">
             <div className="text-[24px] font-bold text-[#1677FF]"><AnimatedNumber target={16} suffix="K+" /></div>
-            <div className="text-[11px] text-white/30 mt-1">行业累计部署 L4</div>
+            <div className="text-[11px] text-white/30 mt-1 whitespace-nowrap">行业累计部署 L4</div>
           </div>
           <div className="text-center">
-            <div className="text-[24px] font-bold text-[#52C41A]"><AnimatedNumber target={100} suffix="M+ km" /></div>
-            <div className="text-[11px] text-white/30 mt-1">自动驾驶里程</div>
+            <div className="text-[24px] font-bold text-[#52C41A]"><AnimatedNumber target={100} suffix="M+" /></div>
+            <div className="text-[11px] text-white/30 mt-1">自动驾驶里程 (km)</div>
           </div>
           <div className="text-center">
             <div className="text-[24px] font-bold text-[#FAAD14]"><AnimatedNumber target={60} suffix="+" /></div>
