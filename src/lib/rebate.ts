@@ -6,7 +6,6 @@ export const VEHICLE_COMPARTMENT_COUNT: Record<string, number> = {
   lm_z2: 3,
   lm_x3: 3,
   lm_z5: 4,
-  lm_e6: 1,
   lm_x6: 5,
 };
 

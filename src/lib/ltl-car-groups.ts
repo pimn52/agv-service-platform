@@ -5,7 +5,7 @@ export const VEHICLE_MODEL_NAME: Record<string, string> = {
   lm_z2: 'Z2 小型配送车',
   lm_x3: 'X3 城配',
   lm_z5: 'Z5 中型配送车',
-  lm_e6: 'E6 散件配送车',
+  lm_e6: 'E6 大容配送车',
   lm_x6: 'X6 重载',
 };
 

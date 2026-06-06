@@ -154,7 +154,7 @@ export const LOGISTICS_VEHICLE_MODELS = [
   { id: 'lm_z2', name: 'Z2 小型配送车', loadCapacity: 300, cargoVolume: 2, range: 110, maxSpeed: 30, description: '窄路末端·社区·校园', imageUrl: '/vehicle-delivery.png' },
   { id: 'lm_x3', name: 'X3 城配', loadCapacity: 520, cargoVolume: 3, range: 200, maxSpeed: 50, description: '城配主力·快递接驳', imageUrl: '/vehicle-delivery.png' },
   { id: 'lm_z5', name: 'Z5 中型配送车', loadCapacity: 800, cargoVolume: 5, range: 180, maxSpeed: 40, description: '通用中型·可选冷链', imageUrl: '/vehicle-delivery.png' },
-  { id: 'lm_e6', name: 'E6 散件配送车', loadCapacity: 300, cargoVolume: 7.4, range: 120, maxSpeed: 40, description: '散件专车·无立柱超大容积', imageUrl: '/vehicle-delivery.png' },
+  { id: 'lm_e6', name: 'E6 大容配送车', loadCapacity: 500, cargoVolume: 7.4, range: 120, maxSpeed: 40, description: '轻抛大容积·一趟多站', imageUrl: '/vehicle-delivery.png' },
   { id: 'lm_x6', name: 'X6 重载', loadCapacity: 1130, cargoVolume: 6, range: 207, maxSpeed: 60, description: '大容量重载·商超补货', imageUrl: '/vehicle-delivery.png' },
 ] as const;
 

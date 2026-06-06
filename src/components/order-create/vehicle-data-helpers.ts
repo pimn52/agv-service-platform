@@ -5,7 +5,7 @@ import {
 } from '@/constants/services';
 
 const SHORT_NAMES: Record<string, string> = {
-  lm_z2: 'Z2小型', lm_x3: 'X3城配', lm_z5: 'Z5中型', lm_e6: 'E6散件', lm_x6: 'X6重载',
+  lm_z2: 'Z2小型', lm_x3: 'X3城配', lm_z5: 'Z5中型', lm_e6: 'E6大容', lm_x6: 'X6重载',
   vm_std: '标准贩卖', vm_smart: '智能零售', vm_drink: '饮品专车',
   sm_basic: '基础巡检', sm_std: '标准巡检', sm_adv: '移动哨兵',
 };
