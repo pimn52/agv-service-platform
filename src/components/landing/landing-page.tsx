@@ -55,34 +55,34 @@ export function LandingPage() {
 
       <div className="relative z-10 text-center px-6 w-full max-w-sm">
         {/* AGV 图标 */}
-        <div className="mb-6 text-[#1677FF]">
+        <div className="mb-10 text-[#1677FF]">
           <AgvIcon size={72} />
         </div>
 
         {/* 个人署名 */}
-        <p className="text-[13px] text-white/50 tracking-wider mb-4">
+        <p className="text-[13px] text-white/50 tracking-wider mb-5">
           洪攀 个人演示作品
         </p>
 
         {/* 产品定位 */}
-        <h1 className="text-[22px] font-bold tracking-wide mb-2">
+        <h1 className="text-[22px] font-bold tracking-wide mb-3">
           城市无人车商用运营产品
         </h1>
 
         {/* 副标题 */}
-        <p className="text-[13px] text-white/40 mb-10">
+        <p className="text-[13px] text-white/40 mb-8">
           企业级无人车调度 · 从下单到签收全程可视
         </p>
 
         {/* 核心数据 */}
-        <div className="flex justify-center gap-8 mb-10">
+        <div className="flex justify-center gap-8 mb-12">
           <div className="text-center">
-            <div className="text-[24px] font-bold text-[#1677FF]"><AnimatedNumber target={16000} suffix="+" /></div>
+            <div className="text-[24px] font-bold text-[#1677FF]"><AnimatedNumber target={16} suffix="K+" /></div>
             <div className="text-[11px] text-white/30 mt-1">行业累计部署 L4</div>
           </div>
           <div className="text-center">
-            <div className="text-[24px] font-bold text-[#52C41A]"><AnimatedNumber target={10000} suffix="W+" /></div>
-            <div className="text-[11px] text-white/30 mt-1">自动驾驶里程 (km)</div>
+            <div className="text-[24px] font-bold text-[#52C41A]"><AnimatedNumber target={100} suffix="M+ km" /></div>
+            <div className="text-[11px] text-white/30 mt-1">自动驾驶里程</div>
           </div>
           <div className="text-center">
             <div className="text-[24px] font-bold text-[#FAAD14]"><AnimatedNumber target={60} suffix="+" /></div>
